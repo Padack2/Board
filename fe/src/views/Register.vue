@@ -115,6 +115,10 @@ import axios from 'axios'
         drawer: null,
       }
     },
+    mounted ()
+    {
+      this.loginCheck();
+    },
 
     methods: {
       register() {
@@ -160,6 +164,13 @@ import axios from 'axios'
       alert(msg) {
         this.alertWindow = true;
         this.alertMsg = msg;
+      }
+      ,
+      loginCheck()
+      {
+        if(sessionStorage.getItem("User") != null){
+          location.href="/mypage"
+        }
       }
     }
   }

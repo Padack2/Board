@@ -8,7 +8,7 @@
       <v-spacer></v-spacer>
       <v-btn
         text
-        @click="$router.push('mypage')"
+        @click="loginCheck()"
         target="_blank"
       >
         <span class="mr-2">
@@ -36,5 +36,14 @@ export default {
   data: () => ({
     //
   }),
+  methods:
+  {
+    loginCheck()
+    {
+      if(sessionStorage.getItem("User") != null){
+        location.href="/mypage"
+      }else location.href="/login"
+    }
+  }
 };
 </script>

@@ -11,10 +11,8 @@ var connection = mysql.createConnection({
   debug : false
 });
 
-
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-
   connection.query('SELECT * from User', function(err, rows, fields) {
     if(!err){
       res.send({success:true, msg: rows});
@@ -48,33 +46,6 @@ router.post('/', (req, res, next) => {
       res.send({success:false, msg: err.message});
     }
   });
-});
-
-router.post('/login', (req, res, next) => {
-  const { id, password} = req.body;
-  connection.query(`SELECT * FROM User WHERE id = '${id}' and password = '${password}'`, function(err, rows, fields) {
-    if(!err){
-      if(rows.length == 0)
-        res.send({success:true, login: false});
-      else
-      {
-        res.cookie("user", rows[0].id, {
-          expires: new Date(Date.now() + 900000),
-          httpOnly: true
-        });
-        console.log(req.cookie.user);
-
-        res.send({success:true, login: true});
-      }
-    }
-    else {
-      res.send({success:false, msg: err.message});
-    }
-  });
-});
-
-router.get('/login', function(req, res, next) {
-    res.send({user:req.cookie.user});
 });
 
 module.exports = router;

@@ -114,11 +114,12 @@ import axios from 'axios'
     methods:{
       login()
       {
-        axios.post(`http://localhost:3000/users/login`, {id:this.id, password:this.password})
+        axios.post(`http://localhost:3000/login`, {id:this.id, password:this.password})
           .then((r)=>{
             console.log(r.data);
             if(r.data.login){
               alert("로그인 완료");
+              sessionStorage.setItem("User", this.id);
               location.href="/";
             }else {
               alert("아이디와 비밀번호를 다시 확인하세요.");
@@ -130,12 +131,9 @@ import axios from 'axios'
       },
       loginCheck()
       {
-        axios.get('http://localhost:3000/users/login')
-          .then((r)=>{
-            alert(r.data.user);
-          }).catch((e)=>{
-            console.error(e.message);
-          })
+        if(sessionStorage.getItem("User") != null){
+          location.href="/mypage"
+        }
       }
     }
   }

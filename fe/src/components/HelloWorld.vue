@@ -29,7 +29,7 @@
         <div class="flex-grow-1"></div>
         <div class="my-2">
           <v-btn depressed large
-          @click = "$router.push('write')">글 작성</v-btn>
+          @click = "loginCheck()">글 작성</v-btn>
         </div>
     </v-footer>
   </v-container>
@@ -56,6 +56,12 @@ export default {
         .catch((e) => {
           console.error(e.message)
         })
+    },
+    loginCheck()
+    {
+      if(sessionStorage.getItem("User") != null){
+        location.href="/write"
+      }else location.href="/login"
     }
   },
   computed: {

@@ -22,10 +22,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in desserts" :key="item.name">
-                <td>{{ item.name }}</td>
-                <td>{{ item.calories }}</td>
-              </tr>
+
             </tbody>
           </template>
         </v-simple-table>
@@ -37,7 +34,7 @@
       >
       <div class="flex-grow-1"></div>
       <div class="my-2">
-        <v-btn depressed large>로그아웃</v-btn>
+        <v-btn depressed large @click="logout()">로그아웃</v-btn>
       </div>
       <div class="my-2" style="margin: 5px">
         <v-btn depressed large
@@ -57,6 +54,25 @@ import axios from 'axios'
         if (this.$vuetify.breakpoint.mdAndUp) binding.column = true
 
         return binding
+      }
+    },
+    mounted ()
+    {
+      this.loginCheck();
+    },
+    methods:
+    {
+      logout()
+      {
+        sessionStorage.removeItem("User");
+        alert("로그아웃되었습니다.")
+        location.href ="/"
+      },
+      loginCheck()
+      {
+        if(sessionStorage.getItem("User") == null){
+          location.href="/login"
+        }
       }
     }
   }
