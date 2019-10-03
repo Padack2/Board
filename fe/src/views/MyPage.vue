@@ -38,7 +38,7 @@
       </div>
       <div class="my-2" style="margin: 5px">
         <v-btn depressed large
-        @click="$router.push('/')">회원탈퇴</v-btn>
+        @click="deleteUser()">회원탈퇴</v-btn>
       </div>
     </v-footer>
   </v-container>
@@ -73,6 +73,19 @@ import axios from 'axios'
         if(sessionStorage.getItem("User") == null){
           location.href="/login"
         }
+      },
+      deleteUser()
+      {
+        axios.delete(`http://localhost:3000/users/${sessionStorage.getItem("User")}`)
+          .then((r) => {
+            sessionStorage.removeItem("User");
+            alert("탈퇴되었습니다.")
+            location.href ="/"
+          })
+          .catch((e) => {
+            this.check = false;
+            console.error(e.message)
+          })
       }
     }
   }

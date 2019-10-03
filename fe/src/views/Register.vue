@@ -150,10 +150,8 @@ import axios from 'axios'
       postUser() {
         axios.post('http://localhost:3000/users', {id: this.id, name: this.name, password: this.password})
           .then((r) => {
-            this.alert("회원가입되었습니다.")
-            this.name = ''
-            this.id = ''
-            this.password = ''
+            alert("회원가입되었습니다.")
+            location.href="/login"
           })
           .catch((e) => {
             console.error(e.message)

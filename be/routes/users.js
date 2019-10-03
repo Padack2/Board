@@ -25,7 +25,6 @@ router.get('/', function(req, res, next) {
 
 router.get('/:id', function(req, res, next) {
   const id = req.params.id
-  console.log(id);
   connection.query('SELECT COUNT(*) as count FROM User WHERE id = "'+id+'"', function(err, rows, fields) {
     if(!err){
       res.send({success:true, msg: rows[0].count == 0});
@@ -47,5 +46,19 @@ router.post('/', (req, res, next) => {
     }
   });
 });
+
+router.delete('/:id', (req, res, next) => {
+  const id = req.params.id
+  connection.query(`DELETE FROM User WHERE id = '${id}'`, function(err, rows, fields) {
+    if(!err){
+      res.send({success:true, msg: rows});
+    }
+    else {
+      res.send({success:false, msg: err.message});
+    }
+  });
+});
+
+
 
 module.exports = router;

@@ -12,7 +12,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="post in posts" :key="post.id">
+            <tr v-for="post in posts" :key="post.id" @click="$router.push(`read/${post.id}`)">
               <td>{{ post.title }}</td>
               <td>{{ post.writer }}</td>
               <td>{{ post.date }}</td>
@@ -51,7 +51,6 @@ export default {
       axios.get('http://localhost:3000/posts').
         then((r) => {
           this.posts = r.data.msg
-          console.log(r)
         })
         .catch((e) => {
           console.error(e.message)

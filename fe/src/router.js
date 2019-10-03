@@ -40,12 +40,12 @@ export default new Router({
       component: () => import('./views/Write.vue')
     },
     {
-      path: '/read',
+      path: '/read/:id',
       name: 'read',
       component: () => import('./views/Read.vue')
     },
     {
-      path: '/update',
+      path: '/update/:id',
       name: 'update',
       component: () => import('./views/Update.vue')
     }
