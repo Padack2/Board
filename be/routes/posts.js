@@ -69,6 +69,20 @@ router.put('/:id', (req, res, next) => {
   });
 });
 
+router.put('/view/:id', (req, res, next) => {
+  const id = req.params.id;
+  connection.query(`UPDATE Post SET view = view + 1 WHERE id = ${id}`,
+   function(err, rows, fields) {
+    if(!err){
+      res.send({success:true, msg : rows[0]});
+    }
+    else {
+      res.send({success:false, msg: err.message});
+      console.log('Errors while performing Query.', err);
+    }
+  });
+});
+
 router.delete('/:id', (req, res, next) => {
   const id = req.params.id
   connection.query(`DELETE FROM Post WHERE id = '${id}'`, function(err, rows, fields) {
@@ -77,6 +91,58 @@ router.delete('/:id', (req, res, next) => {
     }
     else {
       res.send({success:false, msg: err.message});
+    }
+  });
+});
+
+router.get('/count/:id', function(req, res, next) {
+  const id = req.params.id
+  connection.query(`SELECT COUNT(*) as count FROM Post WHERE writerID = '${id}'`, function(err, rows, fields) {
+    if(!err){
+      res.send({success:true, msg: rows[0]});
+    }
+    else {
+      res.send({success:false, msg: err.message});
+    }
+  });
+});
+
+router.get('/user/:id', function(req, res, next) {
+  const id = req.params.id
+  connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID FROM Post WHERE writerID = '${id}'`, function(err, rows, fields) {
+    if(!err){
+      res.send({success:true, msg: rows});
+    }
+    else {
+      res.send({success:false, msg: err.message});
+    }
+  });
+});
+
+router.get('/search/user/:search', function(req, res, next) {
+  const search = req.params.search;
+  connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (select name from user where Post.writerID = User.id) as writer from Post WHERE (select name from user where id = writerID) LIKE '%${search}%'`,
+   function(err, rows, fields) {
+    if(!err){
+      res.send({success:true, msg : rows});
+    }
+    else {
+      res.send({success:false, msg: err.message});
+      console.log('Errors while performing Query.', err);
+    }
+  });
+});
+
+router.get('/search/title/:search', function(req, res, next) {
+  const search = req.params.search;
+  connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (select name from user where Post.writerID = User.id) as writer from Post WHERE title LIKE '%${search}%'`,
+   function(err, rows, fields) {
+    if(!err){
+      res.send({success:true, msg : rows});
+    }
+    else {
+      res.send({success:false, msg: err.message});
+      console.log('Errors while performing Query.', err);
     }
   });
 });

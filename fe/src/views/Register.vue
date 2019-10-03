@@ -122,7 +122,7 @@ import axios from 'axios'
 
     methods: {
       register() {
-        axios.get(`http://localhost:3000/users/${this.id}`)
+        axios.get(`http://localhost:3000/users/count/${this.id}`)
           .then((r) => {
             this.check = r.data.msg? true: false;
             if(!r.data.msg && this.id != '')

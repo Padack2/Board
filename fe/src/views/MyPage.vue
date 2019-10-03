@@ -3,12 +3,12 @@
     <v-layout v-bind="binding">
       <v-flex>
         <v-card dark color="primary">
-          <v-card-text>유저정보 : 홍길동(abcd1234)</v-card-text>
+          <v-card-text>유저정보 : {{user.name}}({{user.id}})</v-card-text>
         </v-card>
       </v-flex>
       <v-flex>
         <v-card dark color="secondary">
-          <v-card-text>올린 글 수 : 55개, 올린 댓글 수 : 10개</v-card-text>
+          <v-card-text>올린 글 수 : {{postCount}}개</v-card-text>
         </v-card>
       </v-flex>
       <v-flex>
@@ -22,7 +22,11 @@
               </tr>
             </thead>
             <tbody>
-
+              <tr v-for="post in posts" :key="post.id" @click="$router.push(`read/${post.id}`)">
+                <td>{{ post.title }}</td>
+                <td>{{ post.date }}</td>
+                <td>{{ post.view }}</td>
+              </tr>
             </tbody>
           </template>
         </v-simple-table>
@@ -58,7 +62,16 @@ import axios from 'axios'
     },
     mounted ()
     {
+      this.pageSetting();
       this.loginCheck();
+    },
+    data ()
+    {
+      return {
+        user: [],
+        postCount: '',
+        posts: [],
+      }
     },
     methods:
     {
@@ -67,6 +80,35 @@ import axios from 'axios'
         sessionStorage.removeItem("User");
         alert("로그아웃되었습니다.")
         location.href ="/"
+      },
+      pageSetting()
+      {
+
+        axios.get(`http://localhost:3000/posts/user/${sessionStorage.getItem("User")}`)
+          .then((r) => {
+            this.posts = r.data.msg;
+            console.log(this.posts);
+            console.log(this.posts[0]);
+          })
+          .catch((e) => {
+            console.error(e.message)
+          });
+
+        axios.get(`http://localhost:3000/users/${sessionStorage.getItem("User")}`)
+          .then((r) => {
+            this.user = r.data.msg;
+          })
+          .catch((e) => {
+            console.error(e.message)
+          });
+
+        axios.get(`http://localhost:3000/posts/count/${sessionStorage.getItem("User")}`)
+          .then((r) => {
+            this.postCount = r.data.msg.count;
+          })
+          .catch((e) => {
+            console.error(e.message)
+          });
       },
       loginCheck()
       {

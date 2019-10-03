@@ -1,7 +1,22 @@
 <template>
   <v-container>
     <v-flex>
-      <v-simple-table fixed-header height="300px">
+      <v-row
+      justify="end"
+      >
+      <v-col cols="2">
+        <v-select v-model="kind" :items="kinds" label="검색옵션"></v-select>
+      </v-col>
+      <v-col cols="3">
+        <v-text-field
+            v-model="search"
+            label="Search"
+            name="search"
+            @keyup.enter.exact="getPosts()"
+          ></v-text-field>
+      </v-col>
+    </v-row>
+      <v-simple-table fixed-header height="500px">
         <template v-slot:default>
           <thead>
             <tr>
@@ -41,6 +56,12 @@ export default {
   data() {
     return {
       posts: [],
+      kind: '제목',
+      kinds: [
+        '작성자',
+        '제목'
+      ],
+      search: ''
     }
   },
   mounted() {
@@ -48,13 +69,34 @@ export default {
   },
   methods: {
     getPosts() {
-      axios.get('http://localhost:3000/posts').
-        then((r) => {
-          this.posts = r.data.msg
-        })
-        .catch((e) => {
-          console.error(e.message)
-        })
+      if(this.search == ''){
+        axios.get('http://localhost:3000/posts').
+          then((r) => {
+            this.posts = r.data.msg
+          })
+          .catch((e) => {
+            console.error(e.message)
+          })
+      }else if(this.kind == '제목')
+      {
+        axios.get(`http://localhost:3000/posts/search/title/${this.search}`).
+          then((r) => {
+            this.posts = r.data.msg
+          })
+          .catch((e) => {
+            console.error(e.message)
+          })
+      }else if(this.kind == '작성자')
+      {
+        axios.get(`http://localhost:3000/posts/search/user/${this.search}`).
+          then((r) => {
+            this.posts = r.data.msg
+          })
+          .catch((e) => {
+            console.error(e.message)
+          })
+      }
+
     },
     loginCheck()
     {

@@ -23,11 +23,23 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.get('/:id', function(req, res, next) {
+router.get('/count/:id', function(req, res, next) {
   const id = req.params.id
   connection.query('SELECT COUNT(*) as count FROM User WHERE id = "'+id+'"', function(err, rows, fields) {
     if(!err){
       res.send({success:true, msg: rows[0].count == 0});
+    }
+    else {
+      res.send({success:false, msg: err.message});
+    }
+  });
+});
+
+router.get('/:id', function(req, res, next) {
+  const id = req.params.id
+  connection.query(`SELECT * FROM User WHERE id = '${id}'`, function(err, rows, fields) {
+    if(!err){
+      res.send({success:true, msg: rows[0]});
     }
     else {
       res.send({success:false, msg: err.message});

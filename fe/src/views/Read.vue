@@ -86,6 +86,13 @@ export default {
         .catch((e) => {
           console.error(e.message)
         })
+
+        axios.put(`http://localhost:3000/posts/view/${this.postID}`)
+          .then((r) => {
+          })
+          .catch((e) => {
+            console.error(e.message)
+          })
     },
     deletePost()
     {
