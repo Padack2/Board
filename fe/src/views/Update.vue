@@ -80,7 +80,7 @@ export default {
       {
         location.href="/login"
       }
-      if(this.postInfo.writerID != sessionStorage.getItem("User"))
+      if(this.postInfo.writerID != sessionStorage.getItem("User")  || sessionStorage.getItem("User") != 'admin')
       {
         alert("자기가 쓴 글만 수정할 수 있습니다.");
         location.href="/"

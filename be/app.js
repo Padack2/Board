@@ -9,6 +9,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var postsRouter = require('./routes/posts');
 var loginRouter = require('./routes/login');
+var commentsRouter = require('./routes/comments')
 
 var app = express();
 
@@ -26,7 +27,9 @@ app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, '../', 'fe', 'dist')));
@@ -37,6 +40,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/posts', postsRouter);
 app.use('/login', loginRouter);
+app.use('/comments', commentsRouter);
 //app.use('/api', require('./routes/api'));
 
 // catch 404 and forward to error handler
@@ -61,16 +65,16 @@ module.exports = app;
 var mysql = require('mysql');
 
 var connection = mysql.createConnection({
-  host : 'localhost',
-  user : 'root',
-  password : '1234',
-  port : 3306,
+  host: 'localhost',
+  user: 'root',
+  password: '1234',
+  port: 3306,
   database: 'treenod',
-  debug : false
+  debug: false
 });
 
 connection.query('SELECT * from User', function(err, rows, fields) {
-  if(!err)
+  if (!err)
     console.log('The solution is: ', rows);
   else {
     console.log('Error while performing Query.', err);

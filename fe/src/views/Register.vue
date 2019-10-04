@@ -105,7 +105,6 @@ import axios from 'axios'
         idRules: [
           v => !!v || 'ID를 입력해주세요.',
           v => (v && v.length <= 10) || '10자 이내로 입력해주세요.',
-          //v=> 데이터베이스에 있는 경우에. '이미 있는 아이디입니다.'
         ],
         password: '',
         pwRules: [

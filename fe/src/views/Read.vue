@@ -13,22 +13,66 @@
       </v-card-text>
     </v-card>
     <v-card
-    :height="100">
+    :height="userID == com.writerID? 170:120"  v-for="com in comments" :key="com.id">
       <v-card-text>
-        <span>December 15th</span><br>
+        <span>{{com.date}}</span><br>
         <span class="text--primary">
-          <span>000님의 댓글</span><br>
-          <span>Whitsunday Island, Whitsunday Islands</span>
+          <span>{{com.writer}}님의 댓글</span><br>
+          <span>{{com.content}}</span>
         </span>
       </v-card-text>
+      <v-card-actions>
+       <v-btn text v-if="userID == com.writerID" @click="modifyDialogOn(com.id)">수정</v-btn>
+       <v-btn text v-if="userID == com.writerID" @click="deleteComment(com.id)">삭제</v-btn>
+      </v-card-actions>
     </v-card>
+    <v-row justify="center">
+    <v-dialog v-model="modifyForm" persistent max-width="500">
+      <v-card>
+        <v-card-title class="headline">댓글 수정</v-card-title>
+        <v-card-text>
+          <v-textarea
+          v-model="comment"
+          :counter="100"
+           label="Comment"
+           no-resize
+           rows="5"
+         ></v-textarea>
+       </v-card-text>
+        <v-card-actions>
+          <div class="flex-grow-1"></div>
+          <v-btn color="green darken-1" text @click="putComment()">수정</v-btn>
+          <v-btn color="green darken-1" text @click="modifyForm = false">취소</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="commentForm" persistent max-width="500">
+      <v-card>
+        <v-card-title class="headline">댓글 입력</v-card-title>
+        <v-card-text>
+          <v-textarea
+          v-model="comment"
+          :counter="100"
+           label="Comment"
+           no-resize
+           rows="5"
+         ></v-textarea>
+       </v-card-text>
+        <v-card-actions>
+          <div class="flex-grow-1"></div>
+          <v-btn color="green darken-1" text @click="postComment()">등록</v-btn>
+          <v-btn color="green darken-1" text @click="commentForm = false">취소</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
     <v-footer
         color="indigo"
         app
       >
         <div class="flex-grow-1"></div>
         <div class="my-2" style="margin: 5px">
-          <v-btn depressed large>댓글달기</v-btn>
+          <v-btn depressed large @click="commentDialogOn()">댓글달기</v-btn>
         </div>
         <div class="my-2" style="margin: 5px">
           <v-btn depressed large
@@ -52,14 +96,23 @@
 import axios from 'axios'
 export default {
   mounted() {
+    this.userID = sessionStorage.getItem("User");
     this.postID = this.$route.params.id;
     this.getPost();
+    this.getComment();
   },
   data(){
     return{
+      userID: '',
+      commentForm: false,
+      modifyForm: false,
       postID: '',
       postInfo: [],
-      isHidden: true
+      isHidden: true,
+      commentIsHidden: true,
+      comment: '',
+      comments: [],
+      commentInfo: []
     }
   },
   computed: {
@@ -80,7 +133,7 @@ export default {
       axios.get(`http://localhost:3000/posts/${this.postID}`)
         .then((r) => {
           this.postInfo = r.data.msg;
-          if(this.postInfo.writerID == sessionStorage.getItem("User")) this.isHidden = false;
+          if(this.postInfo.writerID == sessionStorage.getItem("User") || sessionStorage.getItem("User") == 'admin') this.isHidden = false;
           console.log(r.data.msg);
         })
         .catch((e) => {
@@ -102,10 +155,87 @@ export default {
           location.href ="/"
         })
         .catch((e) => {
-          this.check = false;
           console.error(e.message)
         })
-    }
+    },
+    getComment()
+    {
+      axios.get(`http://localhost:3000/comments/${this.postID}`)
+        .then((r) => {
+          this.comments = r.data.msg;
+        })
+        .catch((e) => {
+          console.error(e.message)
+        })
+    },
+    commentDialogOn()
+    {
+      if(sessionStorage.getItem("User") == null){
+        location.href="/login"
+      }else {
+        this.comment = '';
+        this.commentForm = true;
+      }
+    },
+    postComment()
+    {
+      if(this.comment == '') alert("빈칸을 채워주세요.");
+      else if(this.comment.length > 100) alert("글자 수를 확인해주세요.");
+      else
+      {
+        axios.post('http://localhost:3000/comments', {postID: this.postID, content: this.comment, writerID: sessionStorage.getItem("User")})
+          .then((r) => {
+            alert("글이 등록되었습니다.", r.data.msg);
+            location.href=`/read/${this.postID}`;
+          })
+          .catch((e) => {
+            console.error(e.message)
+            this.alert(e.message)
+          });
+      }
+    },
+    deleteComment(id)
+    {
+      axios.delete(`http://localhost:3000/comments/${id}`)
+        .then((r) => {
+          alert("삭제되었습니다.")
+          location.href=`/read/${this.postID}`
+        })
+        .catch((e) => {
+          console.error(e.message)
+        })
+    },
+    putComment()
+    {
+      if(this.comment == '') alert("빈칸을 채워주세요.");
+      else if(this.comment.length > 100) alert("글자 수를 확인해주세요.");
+      else
+      {
+        axios.put(`http://localhost:3000/comments/${this.commentInfo.id}`, {content: this.comment})
+          .then((r) => {
+            alert("댓글이 수정되었습니다.")
+            location.href=`/read/${this.postID}`
+          })
+          .catch((e) => {
+            console.error(e.message)
+            alert(e.message)
+          });
+      }
+    },
+    modifyDialogOn(id)
+    {
+      axios.get(`http://localhost:3000/comments/id/${id}`)
+        .then((r) => {
+          this.commentInfo = r.data.msg;
+          this.comment = this.commentInfo.content;
+          this.modifyForm = true;
+          //if(this.postInfo.writerID == sessionStorage.getItem("User")) this.isHidden = false;
+          console.log(r.data.msg);
+        })
+        .catch((e) => {
+          console.error(e.message)
+        })
+    },
 
   }
 };
