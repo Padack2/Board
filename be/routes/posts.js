@@ -14,7 +14,23 @@ var connection = mysql.createConnection({
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  connection.query('SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (select name from user where Post.writerID = User.id) as writer from Post;',
+  connection.query('SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (SELECT name FROM user WHERE Post.writerID = User.id) as writer FROM Post;',
+   function(err, rows, fields) {
+    if(!err){
+      res.send({success:true, msg : rows});
+    }
+    else {
+      res.send({success:false, msg: err.message});
+      console.log('Errors while performing Query.', err);
+    }
+  });
+});
+
+router.get('/align/:align', function(req, res, next) {
+  var align = req.params.align;
+  if(align == 'view') align = 'view DESC'
+  console.log(align);
+  connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (SELECT name FROM user WHERE Post.writerID = User.id) as writer FROM Post ORDER BY ${align}`,
    function(err, rows, fields) {
     if(!err){
       res.send({success:true, msg : rows});
@@ -28,8 +44,7 @@ router.get('/', function(req, res, next) {
 
 router.get('/:id', function(req, res, next) {
   const id = req.params.id;
-  console.log(id);
-  connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (select name from user where Post.writerID = User.id) as writer from Post WHERE id = '${id}'`,
+  connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (SELECT name FROM user WHERE Post.writerID = User.id) as writer FROM Post WHERE id = '${id}'`,
    function(err, rows, fields) {
     if(!err){
       res.send({success:true, msg : rows[0]});
@@ -119,9 +134,11 @@ router.get('/user/:id', function(req, res, next) {
   });
 });
 
-router.get('/search/user/:search', function(req, res, next) {
+router.get('/search/user/:search/:align', function(req, res, next) {
   const search = req.params.search;
-  connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (select name from user where Post.writerID = User.id) as writer from Post WHERE (select name from user where id = writerID) LIKE '%${search}%'`,
+  var align = req.params.align;
+  if(align == 'view') align = 'view DESC'
+  connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (SELECT name FROM user WHERE Post.writerID = User.id) as writer FROM Post WHERE (SELECT name FROM user WHERE id = writerID) LIKE '%${search}%' ORDER BY ${align}`,
    function(err, rows, fields) {
     if(!err){
       res.send({success:true, msg : rows});
@@ -133,9 +150,11 @@ router.get('/search/user/:search', function(req, res, next) {
   });
 });
 
-router.get('/search/title/:search', function(req, res, next) {
+router.get('/search/title/:search/:align', function(req, res, next) {
   const search = req.params.search;
-  connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (select name from user where Post.writerID = User.id) as writer from Post WHERE title LIKE '%${search}%'`,
+  var align = req.params.align;
+  if(align == 'view') align = 'view DESC'
+  connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (SELECT name FROM user WHERE Post.writerID = User.id) as writer FROM Post WHERE title LIKE '%${search}%' ORDER BY ${align}`,
    function(err, rows, fields) {
     if(!err){
       res.send({success:true, msg : rows});

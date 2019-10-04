@@ -5,7 +5,10 @@
       justify="end"
       >
       <v-col cols="2">
-        <v-select v-model="kind" :items="kinds" label="검색옵션"></v-select>
+        <v-select v-model="align" :items="alignItem" @change="getPosts()" label="정렬"></v-select>
+      </v-col>
+      <v-col cols="2">
+        <v-select v-model="kind" :items="kinds" label="검색옵션" @change="getPosts()"></v-select>
       </v-col>
       <v-col cols="3">
         <v-text-field
@@ -61,6 +64,12 @@ export default {
         '작성자',
         '제목'
       ],
+      align: '최신순',
+      alignItem: [
+        '최신순',
+        '제목순',
+        '조회수순'
+      ],
       search: ''
     }
   },
@@ -69,8 +78,15 @@ export default {
   },
   methods: {
     getPosts() {
+      var alignment ='';
+      switch(this.align)
+      {
+        case '최신순': alignment = 'date';break;
+        case '제목순': alignment = 'title';break;
+        case '조회수순': alignment = 'view';break;
+      }
       if(this.search == ''){
-        axios.get('http://localhost:3000/posts').
+        axios.get(`http://localhost:3000/posts/align/${alignment}`).
           then((r) => {
             this.posts = r.data.msg
           })
@@ -79,7 +95,7 @@ export default {
           })
       }else if(this.kind == '제목')
       {
-        axios.get(`http://localhost:3000/posts/search/title/${this.search}`).
+        axios.get(`http://localhost:3000/posts/search/title/${this.search}/${alignment}`).
           then((r) => {
             this.posts = r.data.msg
           })
@@ -88,7 +104,7 @@ export default {
           })
       }else if(this.kind == '작성자')
       {
-        axios.get(`http://localhost:3000/posts/search/user/${this.search}`).
+        axios.get(`http://localhost:3000/posts/search/user/${this.search}/${alignment}`).
           then((r) => {
             this.posts = r.data.msg
           })
