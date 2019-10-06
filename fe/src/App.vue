@@ -33,5 +33,17 @@ export default {
     HelloWorld,
 
   },
+  data: () => ({
+    //
+  }),
+  methods:
+  {
+    loginCheck()
+    {
+      if(sessionStorage.getItem("User") != null){
+        location.href="/mypage"
+      }else location.href="/login"
+    }
+  }
 };
 </script>
