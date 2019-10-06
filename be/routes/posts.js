@@ -1,8 +1,10 @@
+//Post : 게시글과 관련된 정보를 주고받는 페이지.
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
 var fs = require('fs');
 
+//DB 연결
 var connection = mysql.createConnection({
   host : 'localhost',
   user : 'root',
@@ -13,7 +15,7 @@ var connection = mysql.createConnection({
 });
 
 
-/* GET users listing. */
+// 모든 게시글 정보 전달
 router.get('/', function(req, res, next) {
   connection.query('SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (SELECT name FROM user WHERE Post.writerID = User.id) as writer FROM Post;',
    function(err, rows, fields) {
@@ -27,6 +29,8 @@ router.get('/', function(req, res, next) {
   });
 });
 
+
+//정렬된 정보 전달
 router.get('/align/:align', function(req, res, next) {
   var align = req.params.align;
   if(align == 'view') align = 'view DESC'
@@ -43,6 +47,7 @@ router.get('/align/:align', function(req, res, next) {
   });
 });
 
+//해당 id에 해당하는 게시글 반환
 router.get('/:id', function(req, res, next) {
   const id = req.params.id;
   connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (SELECT name FROM user WHERE Post.writerID = User.id) as writer FROM Post WHERE id = '${id}'`,
@@ -57,6 +62,7 @@ router.get('/:id', function(req, res, next) {
   });
 });
 
+//새 게시글 저장
 router.post('/', (req, res, next) => {
   const { title, content, writerID } = req.body;
   connection.query(`INSERT INTO Post(title, content, date, writerID) VALUES('${title}', '${content}', NOW(), '${writerID}')`, function(err, rows, fields) {
@@ -69,6 +75,7 @@ router.post('/', (req, res, next) => {
   });
 });
 
+//게시글 수정
 router.put('/:id', (req, res, next) => {
   const id = req.params.id;
   const { title, content } = req.body;
@@ -85,6 +92,7 @@ router.put('/:id', (req, res, next) => {
   });
 });
 
+//게시글 조회수 수정
 router.put('/view/:id', (req, res, next) => {
   const id = req.params.id;
   connection.query(`UPDATE Post SET view = view + 1 WHERE id = ${id}`,
@@ -99,6 +107,7 @@ router.put('/view/:id', (req, res, next) => {
   });
 });
 
+//게시글 삭제
 router.delete('/:id', (req, res, next) => {
   const id = req.params.id
   connection.query(`DELETE FROM Post WHERE id = '${id}'`, function(err, rows, fields) {
@@ -128,6 +137,7 @@ router.delete('/:id', (req, res, next) => {
   });
 });
 
+//id에 대당하는 유저의 게시글 수 전달
 router.get('/count/:id', function(req, res, next) {
   const id = req.params.id
   connection.query(`SELECT COUNT(*) as count FROM Post WHERE writerID = '${id}'`, function(err, rows, fields) {
@@ -140,6 +150,7 @@ router.get('/count/:id', function(req, res, next) {
   });
 });
 
+//user의 id에 대항하는 게시글 모두 전달
 router.get('/user/:id', function(req, res, next) {
   const id = req.params.id
   connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID FROM Post WHERE writerID = '${id}'`, function(err, rows, fields) {
@@ -152,6 +163,7 @@ router.get('/user/:id', function(req, res, next) {
   });
 });
 
+//작성자검색과 정렬 동시 사용
 router.get('/search/user/:search/:align', function(req, res, next) {
   const search = req.params.search;
   var align = req.params.align;
@@ -168,6 +180,7 @@ router.get('/search/user/:search/:align', function(req, res, next) {
   });
 });
 
+//제목 검색과 정렬 동시 사용
 router.get('/search/title/:search/:align', function(req, res, next) {
   const search = req.params.search;
   var align = req.params.align;

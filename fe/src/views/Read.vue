@@ -101,6 +101,31 @@
 </template>
 
 <script>
+/*
+변수설명
+  userID : 현재 로그인되어 있는 user의 ID
+  commentForm : 댓글 입력창
+  modifyForm : 댓글 수정창
+  postID : 현재 보고 있는 게시글의 id
+  postInfo : 현재 보고 있는 게시글의 정보
+  isHidden : 게시글을 쓴 사람이거나 게시글이면 수정과 삭제 버튼을 볼 수 있음. 수정과 삭제 버튼의 가림 여부
+  comment : 댓글을 수정 또는 입력할 때 입력되어 있는 comment의 내용
+  comments : 게시글에 입력되어 있는 모든 댓글의 정보
+  commentInfo : 수정할 댓글의 정보(수정 전 미리 입력해놓기 위함)
+  files : 해당 게시글의 첨부파일
+
+메서드 설명
+  getFiles : 현재 게시글의 모든 파일을 불러와 저장
+  getPost : 현재 게시글의 정보를 불러와 저장
+  deletePost : 현재 게시글 삭제
+  getComment : 현재 게시글의 모든 댓글을 불러와 저장
+  commentDialogOn : 댓글 입력창 on
+  modifyDialogOn : 댓글 수정 on
+  postComment : 입력된 (새) 댓글 저장
+  putComment : 수정된 댓글 저장
+  deleteComment : 댓글 삭제
+  fileDownload : 첨부파일 다운로드
+*/
 import axios from 'axios'
 export default {
   mounted() {
@@ -118,7 +143,6 @@ export default {
       postID: '',
       postInfo: [],
       isHidden: true,
-      commentIsHidden: true,
       comment: '',
       comments: [],
       commentInfo: [],

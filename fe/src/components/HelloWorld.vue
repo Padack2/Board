@@ -54,6 +54,19 @@
 </template>
 
 <script>
+/*
+변수 설명
+  posts : 불러온 게시글의 모든 정보 저장
+  kind : 현재 검색 옵션
+  kinds : 모든 검색 옵션
+  align : 현재 정렬 옵션
+  alignItem : 모든 검색 옵션
+  search : 검색어
+
+메서드 설명
+  getPosts : 정렬과 검색에 따라 게시글을 불러옴.
+  loginCheck : 글쓰기 버튼을 눌렀을 때 로그인된 사용자인지 체크. 되어있다면 글쓰기 화면으로, 되어있지 않다면 로그인 화면으로 이동.
+*/
 import axios from 'axios'
 export default {
   data() {

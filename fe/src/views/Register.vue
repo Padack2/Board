@@ -89,6 +89,22 @@
 </template>
 
 <script>
+/*
+변수설명
+  id : 입력된 아이디
+  name : 입력된 이름
+  password : 입력된 비밀번호
+  alertWindow : 경고창(false 꺼짐, true 켜짐)
+  alertMsg : 경고창 문구
+  idRules : 아이디 작성 규칙
+  pwRules : 비밀번호 작성 규칙
+
+메서도 설명
+  loginCheck : 로그인이 되어 있으면 다른페이지로 이동
+  alert : 경고창 띄우기
+  register : id중복체크 및 작성규칙 체크 후 postUser 호출
+  postUser : 새 유저 등록
+*/
 import axios from 'axios'
   export default {
     props: {
@@ -99,14 +115,12 @@ import axios from 'axios'
         id: '',
         name: '',
         password: '',
-        check: false,
         alertWindow: false,
         alertMsg: '',
         idRules: [
           v => !!v || 'ID를 입력해주세요.',
           v => (v && v.length <= 10) || '10자 이내로 입력해주세요.',
         ],
-        password: '',
         pwRules: [
           v => !!v || '비밀번호를 입력해주세요.',
           v => (v && v.length <= 12) || '12자 이내로 입력해주세요.'
@@ -123,7 +137,6 @@ import axios from 'axios'
       register() {
         axios.get(`http://localhost:3000/users/count/${this.id}`)
           .then((r) => {
-            this.check = r.data.msg? true: false;
             if(!r.data.msg && this.id != '')
             {
               this.alert("아이디가 중복되었습니다. 다른 아이디를 입력해주세요.");
@@ -138,12 +151,8 @@ import axios from 'axios'
             console.log(r.data.msg);
           })
           .catch((e) => {
-            this.check = false;
             console.error(e.message)
           })
-
-        //console.log(this.check)
-
       },
 
       postUser() {

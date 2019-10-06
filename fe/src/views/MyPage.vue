@@ -49,6 +49,18 @@
 </template>
 
 <script>
+/*
+변수 설명
+  user : 현재 접속되어 있는 유저(자신)의 정보
+  postCount : User가 지금까지 쓴 글의 수
+  posts : User가 지금까지 쓴 모든 글의 정보
+
+메서드 설명
+  logout : 로그아웃
+  pageSetting : 필요한 정보를 각 변수에 할당
+  loginCheck : 페이지에 접속된 유저가 로그인된 유저가 아니라면 로그인 화면으로 이동.
+  deleteUser : 회원탈퇴
+*/
 import axios from 'axios'
   export default {
     computed: {

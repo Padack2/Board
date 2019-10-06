@@ -37,6 +37,20 @@
 
 <script>
 import axios from 'axios'
+/*
+변수설명
+  title : 입력된 제목
+  content : 입력된 내용
+  postID : 현재 수정하고 있는 게시글의 ID
+  postInfo : 현재 수정하고 있는 게시글의 정보
+  titleRules : 제목 작성 규칙
+  contentRules : 내용 작성 규칙
+
+메서드 설명
+  loginCheck : 현재 접근한 사용자의 id가 게시글을 작성한 자와 똑같거나 관리자인지 확인.
+  getPost : 원래 게시글의 내용을 미리 입력해놓기 위해 해당 게시글의 정보를 가져옴.
+  putPost : 수정된 내용을 저장
+*/
 export default {
   data () {
     return{

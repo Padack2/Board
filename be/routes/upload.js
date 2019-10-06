@@ -1,9 +1,11 @@
+//Upload : 파일 upload와 download에 관한 정보를 주고받는 페이지
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 var mysql = require('mysql');
 
+//DB 연결
 var connection = mysql.createConnection({
   host : 'localhost',
   user : 'root',
@@ -13,6 +15,8 @@ var connection = mysql.createConnection({
   debug : false
 });
 
+//multer 모듈을 사용
+//upload에 사전 설정 저장
 let upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
@@ -24,7 +28,7 @@ let upload = multer({
   }),
 });
 
-
+//해당하는 파일의 정보를 전달
 router.get('/show/:postID', (req, res, next) => {
   const id = req.params.postID;
 
@@ -32,18 +36,8 @@ router.get('/show/:postID', (req, res, next) => {
     res.send({success:true, msg: rows});
   });
 })
-/*
-router.post('/create', multer().array("files"), (req, res, next) =>{
-  let files = req.files
 
-  let result = {
-    originalName : file.originalName,
-    size : file.size,
-  }
-
-  res.json(result);
-})*/
-
+//새로운 파일을 가져와 백엔드의 로컬 저장소에 저장
 router.post("/create/:writerID", upload.array("files"), function (req, res) {
     const writer = req.params.writerID;
 
@@ -70,6 +64,7 @@ router.post("/create/:writerID", upload.array("files"), function (req, res) {
     return res.sendStatus(200);
 });
 
+//다운로드 링크
 router.get('/download/:id/:name', function(req, res){
   var id = req.params.id;
   var name = req.params.name;

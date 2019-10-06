@@ -82,6 +82,19 @@
 </template>
 
 <script>
+/*
+변수설명
+  id : 입력된 ID,
+  password : 입력된 비밀번호,
+  alertWindow : 경고창 여부
+  alertMsg : 경고창의 메시지
+  idRules : 아이디 작성 규칙
+  pwRules : 비밀번호 작성 규칙
+
+메서드 설명
+  loginCheck : 현재 로그인이 되어 있는지 체크. 로그인이 되어있다면 다른 페이지로 이동.
+  login : 입력한 정보의 비교 및 로그인시 세션에 아이디를 저장.
+*/
 import axios from 'axios'
   export default {
     props: {
@@ -98,7 +111,6 @@ import axios from 'axios'
           v => (v && v.length <= 10) || '10자 이내로 입력해주세요.',
           //v=> 데이터베이스에 있는 경우에. '이미 있는 아이디입니다.'
         ],
-        password: '',
         pwRules: [
           v => !!v || '비밀번호를 입력해주세요.',
           v => (v && v.length <= 12) || '12자 이내로 입력해주세요.'
@@ -131,27 +143,6 @@ import axios from 'axios'
       },
       loginCheck()
       {
-
-        axios.get('http://localhost:3000/upload/download')
-          .then(function(res) {
-            var data = new Blob([res.data]);
-            if (typeof window.navigator.msSaveBlob === 'function') {
-              // If it is IE that support download blob directly.
-              window.navigator.msSaveBlob(data, defaultFilename);
-            } else {
-              var blob = data;
-              var link = document.createElement('a');
-              link.href = window.URL.createObjectURL(blob);
-              link.download = "dasfdsa.vue";
-
-              document.body.appendChild(link);
-
-              link.click(); // create an <a> element and simulate the click operation.
-            }
-        }).catch((e)=> {
-            console.error(e.message)
-          })
-
         if(sessionStorage.getItem("User") != null){
           location.href="/mypage"
         }

@@ -40,6 +40,19 @@
 </template>
 
 <script>
+/*
+변수설명
+  files : 입력돈 파일들
+  title : 입력된 제목
+  content : 입력된 내용
+  titleRules : 제목 작성 규칙
+  contentRules : 내용 작성 규칙
+
+메서드 설명
+  loginCheck : 로그인되지 않은 사용자라면 다른 화면으로 이동
+  writePost : (새) 게시굴 등록
+  submitFiles : 입력된 파일 서버로 전송
+*/
 import axios from 'axios'
 export default {
   data () {
