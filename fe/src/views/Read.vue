@@ -12,6 +12,14 @@
         </span>
       </v-card-text>
     </v-card>
+    <v-expansion-panels>
+      <v-expansion-panel>
+        <v-expansion-panel-header>첨부파일</v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <v-btn v-for="file in files" @click="fileDownload(file.id, file.name)">{{file.name}}</v-btn>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
     <v-card
     :height="userID == com.writerID? 170:120"  v-for="com in comments" :key="com.id">
       <v-card-text>
@@ -99,6 +107,7 @@ export default {
     this.userID = sessionStorage.getItem("User");
     this.postID = this.$route.params.id;
     this.getPost();
+    this.getFiles();
     this.getComment();
   },
   data(){
@@ -112,7 +121,8 @@ export default {
       commentIsHidden: true,
       comment: '',
       comments: [],
-      commentInfo: []
+      commentInfo: [],
+      files: [],
     }
   },
   computed: {
@@ -129,6 +139,15 @@ export default {
   },
   methods :
   {
+    getFiles() {
+      axios.get(`http://localhost:3000/upload/show/${this.postID}`)
+        .then((r) => {
+          this.files = r.data.msg;
+        })
+        .catch((e) => {
+          console.error(e.message)
+        })
+    },
     getPost() {
       axios.get(`http://localhost:3000/posts/${this.postID}`)
         .then((r) => {
@@ -139,13 +158,6 @@ export default {
         .catch((e) => {
           console.error(e.message)
         })
-
-        axios.put(`http://localhost:3000/posts/view/${this.postID}`)
-          .then((r) => {
-          })
-          .catch((e) => {
-            console.error(e.message)
-          })
     },
     deletePost()
     {
@@ -236,7 +248,10 @@ export default {
           console.error(e.message)
         })
     },
-
+    fileDownload(id, filename)
+    {
+      window.open(`http://localhost:3000/upload/download/${id}/${filename}`);
+    }
   }
 };
 </script>

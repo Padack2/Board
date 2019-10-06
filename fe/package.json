@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "core-js": "^2.6.5",
+    "js-file-download": "^0.4.8",
     "material-icon": "^0.1.4",
     "vue": "^2.6.10",
     "vue-material-design-icons": "^4.1.0",

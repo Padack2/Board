@@ -131,6 +131,27 @@ import axios from 'axios'
       },
       loginCheck()
       {
+
+        axios.get('http://localhost:3000/upload/download')
+          .then(function(res) {
+            var data = new Blob([res.data]);
+            if (typeof window.navigator.msSaveBlob === 'function') {
+              // If it is IE that support download blob directly.
+              window.navigator.msSaveBlob(data, defaultFilename);
+            } else {
+              var blob = data;
+              var link = document.createElement('a');
+              link.href = window.URL.createObjectURL(blob);
+              link.download = "dasfdsa.vue";
+
+              document.body.appendChild(link);
+
+              link.click(); // create an <a> element and simulate the click operation.
+            }
+        }).catch((e)=> {
+            console.error(e.message)
+          })
+
         if(sessionStorage.getItem("User") != null){
           location.href="/mypage"
         }

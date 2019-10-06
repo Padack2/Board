@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
+var fs = require('fs');
 
 var connection = mysql.createConnection({
   host : 'localhost',
@@ -102,7 +103,24 @@ router.delete('/:id', (req, res, next) => {
   const id = req.params.id
   connection.query(`DELETE FROM Post WHERE id = '${id}'`, function(err, rows, fields) {
     if(!err){
-      res.send({success:true, msg: rows});
+      connection.query(`SELECT id FROM File WHERE postID = '${id}'`, function(err, rows, fields) {
+        if(!err){
+          for(var i = 0; i < rows.length; i++)
+          {
+            fs.unlinkSync(`${__dirname}/../upload/${rows[i].id}`);
+          }
+          connection.query(`DELETE FROM File WHERE postID = '${id}'`, function(err, rows, fields) {
+            if(!err){
+              res.send({success:true})
+            }else {
+              res.send({success:false, msg:err.message});
+            }
+          });
+        }
+        else {
+          res.send({success:false, msg:err.message});
+        }
+      });
     }
     else {
       res.send({success:false, msg: err.message});

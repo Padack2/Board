@@ -10,6 +10,10 @@
         ></v-text-field>
     </v-row>
     <v-row>
+      <v-file-input show-size counter chips multiple label="파일첨부(파일은 수정할 수 없습니다. 신중하게 올려주세요.)" ref="myfile" v-model="files"></v-file-input>
+   </v-flex>
+    </v-row>
+    <v-row>
       <v-textarea
       v-model="content"
       :counter="2000"
@@ -40,6 +44,7 @@ import axios from 'axios'
 export default {
   data () {
     return{
+      files: [],
       title: '',
       content: '',
       titleRules: [
@@ -81,6 +86,7 @@ export default {
       {
         axios.post('http://localhost:3000/posts', {title: this.title, content: this.content, writerID: sessionStorage.getItem("User")})
           .then((r) => {
+            this.submitFiles();
             alert("글이 등록되었습니다.")
             location.href="/"
           })
@@ -89,7 +95,31 @@ export default {
             this.alert(e.message)
           });
       }
+    },
+    submitFiles() {
+    if (this.files) {
+        let formData = new FormData();
+
+        // files
+        for (let file of this.files) {
+            formData.append("files", file, file.name);
+        }
+
+        // additional data
+        formData.append("test", "foo bar");
+
+        axios.post(`http://localhost:3000/upload/create/${sessionStorage.getItem("User")}`, formData)
+            .then(response => {
+                console.log("Success!");
+                console.log({ response });
+            })
+            .catch(error => {
+                console.log({ error });
+            });
+    } else {
+        console.log("there are no files.");
     }
+}
   }
 };
 </script>
