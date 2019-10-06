@@ -82,7 +82,6 @@ export default {
   },
   mounted ()
   {
-    this.loginCheck();
     this.postID = this.$route.params.id;
     this.getPost();
   },
@@ -94,10 +93,14 @@ export default {
       {
         location.href="/login"
       }
-      if(this.postInfo.writerID != sessionStorage.getItem("User")  || sessionStorage.getItem("User") != 'admin')
+      if(this.postInfo.writerID != sessionStorage.getItem("User"))
       {
-        alert("자기가 쓴 글만 수정할 수 있습니다.");
-        location.href="/"
+        console.log(this.postInfo.writerID);
+        if(sessionStorage.getItem("User") != 'admin')
+        {
+          alert("자기가 쓴 글만 수정할 수 있습니다.");
+          location.href="/"
+        }
       }
     },
     getPost() {
@@ -106,6 +109,8 @@ export default {
           this.postInfo = r.data.msg;
           this.title = this.postInfo.title;
           this.content = this.postInfo.content;
+
+          this.loginCheck();
           console.log(r.data.msg);
         })
         .catch((e) => {

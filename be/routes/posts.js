@@ -34,6 +34,7 @@ router.get('/', function(req, res, next) {
 router.get('/align/:align', function(req, res, next) {
   var align = req.params.align;
   if(align == 'view') align = 'view DESC'
+  else if(align == 'date') align = 'id DESC';
   console.log(align);
   connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (SELECT name FROM user WHERE Post.writerID = User.id) as writer FROM Post ORDER BY ${align}`,
    function(err, rows, fields) {
@@ -168,6 +169,7 @@ router.get('/search/user/:search/:align', function(req, res, next) {
   const search = req.params.search;
   var align = req.params.align;
   if(align == 'view') align = 'view DESC'
+  else if(align == 'date') align = 'date DESC';
   connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (SELECT name FROM user WHERE Post.writerID = User.id) as writer FROM Post WHERE (SELECT name FROM user WHERE id = writerID) LIKE '%${search}%' ORDER BY ${align}`,
    function(err, rows, fields) {
     if(!err){
@@ -184,7 +186,8 @@ router.get('/search/user/:search/:align', function(req, res, next) {
 router.get('/search/title/:search/:align', function(req, res, next) {
   const search = req.params.search;
   var align = req.params.align;
-  if(align == 'view') align = 'view DESC'
+  if(align == 'view') align = 'view DESC';
+  else if(align == 'date') align = 'date DESC';
   connection.query(`SELECT id, title, content, view, DATE_FORMAT(date, "%Y-%c-%d") as date, writerID, (SELECT name FROM user WHERE Post.writerID = User.id) as writer FROM Post WHERE title LIKE '%${search}%' ORDER BY ${align}`,
    function(err, rows, fields) {
     if(!err){
